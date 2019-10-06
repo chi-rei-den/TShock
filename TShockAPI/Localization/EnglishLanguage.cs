@@ -16,11 +16,13 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Terraria;
 using Terraria.Localization;
+using System.Reflection;
+
 
 namespace TShockAPI.Localization
 {
@@ -37,40 +39,22 @@ namespace TShockAPI.Localization
 
 		internal static void Initialize()
 		{
-//			var culture = Language.ActiveCulture;
-//
-//			var skip = culture == GameCulture.FromCultureName(GameCulture.CultureName.English);
-//
-//			try
-//			{
-//				if (!skip)
-//				{
-//					LanguageManager.Instance.SetLanguage(GameCulture.FromCultureName(GameCulture.CultureName.English));
-//				}
-//
-//				for (var i = -48; i < Main.maxItemTypes; i++)
-//				{
-//					ItemNames.Add(i, Lang.GetItemNameValue(i));
-//				}
-//
-//				for (var i = -17; i < Main.maxNPCTypes; i++)
-//				{
-//					NpcNames.Add(i, Lang.GetNPCNameValue(i));
-//				}
-//
-//				foreach (var field in typeof(Main).Assembly.GetType("Terraria.ID.PrefixID")
-//							.GetFields().Where(f => !f.Name.Equals("Count", StringComparison.Ordinal)))
-//				{
-//					Prefixs.Add((int) field.GetValue(null), field.Name);
-//				}
-//			}
-//			finally
-//			{
-//				if (!skip)
-//				{
-//					LanguageManager.Instance.SetLanguage(culture);
-//				}
-//			}
+			LanguageManager.Instance.SetLanguage("en-US");
+			Lang.InitializeLegacyLocalization();
+			for (int i = -48; i < 3930; i++)
+			{
+				EnglishLanguage.ItemNames.Add(i, Lang.GetItemNameValue(i));
+			}
+			for (int j = -17; j < 580; j++)
+			{
+				EnglishLanguage.NpcNames.Add(j, Lang.GetNPCNameValue(j));
+			}
+			foreach (FieldInfo fieldInfo in typeof(Main).Assembly.GetType("Terraria.ID.PrefixID").GetFields())
+				if (!fieldInfo.Name.Equals("Count", StringComparison.Ordinal))
+				{
+					EnglishLanguage.Prefixs.Add((int)fieldInfo.GetValue(null), fieldInfo.Name);
+				}
+
 		}
 
 		/// <summary>
