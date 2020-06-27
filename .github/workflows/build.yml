@@ -15,6 +15,9 @@ jobs:
         submodules: recursive
     - name: Install NuGet client
       uses: nuget/setup-nuget@v1
+      with:
+        nuget-api-key: ${{ secrets.ApiKey }}
+        nuget-version: '5.x'
     - name: Restore NuGet packages
       run: |
         nuget restore .\TerrariaServerAPI\TShock.4.OTAPI.sln
@@ -40,6 +43,18 @@ jobs:
         xcopy /Y prebuilts\*.* TShockAPI\bin\${{ matrix.mode }}
         mkdir TShockAPI\bin\${{ matrix.mode }}\ServerPlugins
         move TShockAPI\bin\${{ matrix.mode }}\TShockAPI.dll TShockAPI\bin\${{ matrix.mode }}\ServerPlugins
+    - name: NuGet Nightly feed
+      if: contains(matrix.mode, 'Release') && github.ref == 'refs/heads/ci'
+      run: |
+        python scripts/nuget_nightly_build.py
+        nuget pack tshock.nuspec -OutputFileNamesWithoutVersion
+        nuget push TerrariaServer.TShock.Nightly.nupkg -Source nuget.org -SkipDuplicate -NonInteractive -Verbosity detailed
+    - name: Upload TShock NuGet package
+      if: contains(matrix.mode, 'Release') && github.ref == 'refs/heads/ci'
+      uses: actions/upload-artifact@master
+      with:
+        name: TShock NuGet
+        path: TerrariaServer.TShock.Nightly.nupkg
     - name: Upload TShock (Debug)
       if: contains(matrix.mode, 'Debug')
       uses: actions/upload-artifact@master

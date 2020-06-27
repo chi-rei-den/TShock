@@ -1,0 +1,26 @@
+<?xml version="1.0"?>
+<package>
+  <metadata>
+    <id>TerrariaServer.TShock.Nightly</id>
+    <version>VERSIONPLACEHOLDER</version>
+    <authors>Pryaxis &amp; TShock Contributors</authors>
+    <owners>TShock Team</owners>
+    <requireLicenseAcceptance>true</requireLicenseAcceptance>
+    <projectUrl>https://github.com/Pryaxis/TShock</projectUrl>
+    <license type="expression">GPL-3.0-only</license>
+    <description>TShock is a toolbox for Terraria servers and communities. That toolbox is jam packed with anti-cheat tools, server-side characters, groups, permissions, item bans, tons of commands, and limitless potential. It's one of a kind.
+This package was uploaded from CI service by SGKoishi, NOT official TShock Team.</description>
+    <releaseNotes>NAMEPLACEHOLDER</releaseNotes>
+    <copyright>Copyright 2020</copyright>
+    <dependencies>
+      <group targetFramework=".NETFramework4.5.2">
+        <dependency id="BCrypt.Net" version="0.1.0" />
+        <dependency id="MySql.Data" version="6.9.8" />
+        <dependency id="Newtonsoft.Json" version="10.0.3" />
+      </group>
+    </dependencies>
+  </metadata>
+  <files>
+    <file src="binary\*.*" target="lib\net452" />
+  </files>
+</package>
