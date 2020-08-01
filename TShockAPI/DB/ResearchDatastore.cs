@@ -50,8 +50,8 @@ namespace TShockAPI.DB
 			}
 			catch (DllNotFoundException)
 			{
-				Console.WriteLine("Possible problem with your database - is Sqlite3.dll present?");
-				throw new Exception("Could not find a database library (probably Sqlite3.dll)");
+				System.Console.WriteLine("无法进行数据库操作，请检查文件完整性。");
+				throw new Exception("无法进行数据库操作，文件缺失");
 			}
 		}
 

@@ -78,7 +78,7 @@ namespace TShockAPI.DB
 				// Detect duplicate user using a regexp as Sqlite doesn't have well structured exceptions
 				if (Regex.IsMatch(ex.Message, "Username.*not unique|UNIQUE constraint failed: Users\\.Username"))
 					throw new UserAccountExistsException(account.Name);
-				throw new UserAccountManagerException("AddUser SQL returned an error (" + ex.Message + ")", ex);
+				throw new UserAccountManagerException("添加用户过程中出现异常：" + ex.Message, ex);
 			}
 
 			if (1 > ret)
@@ -109,7 +109,7 @@ namespace TShockAPI.DB
 			}
 			catch (Exception ex)
 			{
-				throw new UserAccountManagerException("RemoveUser SQL returned an error", ex);
+				throw new UserAccountManagerException("删除用户过程中出现异常", ex);
 			}
 		}
 
@@ -131,7 +131,7 @@ namespace TShockAPI.DB
 			}
 			catch (Exception ex)
 			{
-				throw new UserAccountManagerException("SetUserPassword SQL returned an error", ex);
+				throw new UserAccountManagerException("设定用户密码过程中出现异常", ex);
 			}
 		}
 
@@ -151,7 +151,7 @@ namespace TShockAPI.DB
 			}
 			catch (Exception ex)
 			{
-				throw new UserAccountManagerException("SetUserUUID SQL returned an error", ex);
+				throw new UserAccountManagerException("设定用户UUID过程中出现异常", ex);
 			}
 		}
 
@@ -179,7 +179,7 @@ namespace TShockAPI.DB
 			}
 			catch (Exception ex)
 			{
-				throw new UserAccountManagerException("SetUserGroup SQL returned an error", ex);
+				throw new UserAccountManagerException("设定用户组过程中出现异常", ex);
 			}
 		}
 
@@ -194,7 +194,7 @@ namespace TShockAPI.DB
 			}
 			catch (Exception ex)
 			{
-				throw new UserAccountManagerException("UpdateLogin SQL returned an error", ex);
+				throw new UserAccountManagerException("设定用户登陆地址过程中出现异常", ex);
 			}
 		}
 
@@ -215,7 +215,7 @@ namespace TShockAPI.DB
 			}
 			catch (Exception ex)
 			{
-				TShock.Log.ConsoleError("FetchHashedPasswordAndGroup SQL returned an error: " + ex);
+				TShock.Log.ConsoleError("检索用户ID过程中出现异常:" + ex);
 			}
 			return -1;
 		}
@@ -263,13 +263,13 @@ namespace TShockAPI.DB
 			{
 				query = "SELECT * FROM Users WHERE ID=@0";
 				arg = account.ID;
-				type = "id";
+				type = "ID";
 			}
 			else
 			{
 				query = "SELECT * FROM Users WHERE Username=@0";
 				arg = account.Name;
-				type = "name";
+				type = "名称";
 			}
 
 			try
@@ -288,10 +288,10 @@ namespace TShockAPI.DB
 			}
 			catch (Exception ex)
 			{
-				throw new UserAccountManagerException("GetUser SQL returned an error (" + ex.Message + ")", ex);
+				throw new UserAccountManagerException("检索用户过程中出现异常:" + ex.Message, ex);
 			}
 			if (multiple)
-				throw new UserAccountManagerException(String.Format("Multiple user accounts found for {0} '{1}'", type, arg));
+				throw new UserAccountManagerException(String.Format("发现多个匹配\"{1}\"的{0}。", type, arg));
 
 			throw new UserAccountNotExistException(account.Name);
 		}
@@ -492,7 +492,7 @@ namespace TShockAPI.DB
 			}
 			catch (FormatException)
 			{
-				TShock.Log.ConsoleError("Warning: Not upgrading work factor because bcrypt hash in an invalid format.");
+				TShock.Log.ConsoleError("警告：无法设定密码哈希强度。");
 				return;
 			}
 
@@ -515,7 +515,7 @@ namespace TShockAPI.DB
 		{
 			if (password.Trim().Length < Math.Max(4, TShock.Config.MinimumPasswordLength))
 			{
-				throw new ArgumentOutOfRangeException("password", "Password must be > " + TShock.Config.MinimumPasswordLength + " characters.");
+				throw new ArgumentOutOfRangeException("password", "密码必须多于" + TShock.Config.MinimumPasswordLength + "个字符。");
 			}
 			try
 			{
@@ -523,7 +523,7 @@ namespace TShockAPI.DB
 			}
 			catch (ArgumentOutOfRangeException)
 			{
-				TShock.Log.ConsoleError("Invalid BCrypt work factor in config file! Creating new hash using default work factor.");
+				TShock.Log.ConsoleError("无法解析配置文件中的密码哈希强度，正在使用默认值。");
 				Password = BCrypt.Net.BCrypt.HashPassword(password.Trim());
 			}
 		}
@@ -535,7 +535,7 @@ namespace TShockAPI.DB
 		{
 			if (password.Trim().Length < Math.Max(4, TShock.Config.MinimumPasswordLength))
 			{
-				throw new ArgumentOutOfRangeException("password", "Password must be > " + TShock.Config.MinimumPasswordLength + " characters.");
+				throw new ArgumentOutOfRangeException("password", "密码必须多于" + TShock.Config.MinimumPasswordLength + "个字符。");
 			}
 			Password = BCrypt.Net.BCrypt.HashPassword(password.Trim(), workFactor);
 		}
@@ -564,7 +564,7 @@ namespace TShockAPI.DB
 				throw new NullReferenceException("bytes");
 			Func<HashAlgorithm> func;
 			if (!HashTypes.TryGetValue(TShock.Config.HashAlgorithm.ToLower(), out func))
-				throw new NotSupportedException("Hashing algorithm {0} is not supported".SFormat(TShock.Config.HashAlgorithm.ToLower()));
+				throw new NotSupportedException("不支持哈希算法\"{0}\"。".SFormat(TShock.Config.HashAlgorithm.ToLower()));
 
 			using (var hash = func())
 			{
@@ -679,7 +679,7 @@ namespace TShockAPI.DB
 		/// <param name="name">The name of the user account that already exists.</param>
 		/// <returns>A UserAccountExistsException object with the user's name passed in the message.</returns>
 		public UserAccountExistsException(string name)
-			: base("User account '" + name + "' already exists")
+			: base("用户名\"" + name + "\"已经存在。")
 		{
 		}
 	}
@@ -692,7 +692,7 @@ namespace TShockAPI.DB
 		/// <param name="name">The user account name to be pasesd in the message.</param>
 		/// <returns>A new UserAccountNotExistException object with a message containing the user account name that does not exist.</returns>
 		public UserAccountNotExistException(string name)
-			: base("User account '" + name + "' does not exist")
+			: base("用户名\"" + name + "\"不存在。")
 		{
 		}
 	}
@@ -705,7 +705,7 @@ namespace TShockAPI.DB
 		/// <param name="group">The group name.</param>
 		/// <returns>A new GroupNotExistsException with the group that does not exist's name in the message.</returns>
 		public GroupNotExistsException(string group)
-			: base("Group '" + group + "' does not exist")
+			: base("用户组\"" + name + "\"不存在。")
 		{
 		}
 	}

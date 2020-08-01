@@ -99,13 +99,13 @@ namespace TShockAPI.DB
 								if (Int32.TryParse(splitids[i], out userid)) // if unparsable, it's not an int, so silently skip
 									r.AllowedIDs.Add(userid);
 								else
-									TShock.Log.Warn("One of your UserIDs is not a usable integer: " + splitids[i]);
+									TShock.Log.Warn("UserIDs中含有不是int32整型的值：" + splitids[i]);
 							}
 						}
 						catch (Exception e)
 						{
-							TShock.Log.Error("Your database contains invalid UserIDs (they should be ints).");
-							TShock.Log.Error("A lot of things will fail because of this. You must manually delete and re-create the allowed field.");
+							TShock.Log.Error("数据库中的数据不符合要求，部分功能可能无法使用。");
+							TShock.Log.Error("请删除并重新创建对应部分。");
 							TShock.Log.Error(e.ToString());
 							TShock.Log.Error(e.StackTrace);
 						}
@@ -785,7 +785,7 @@ namespace TShockAPI.DB
 			{
 				if (!ply.HasBeenNaggedAboutLoggingIn)
 				{
-					ply.SendMessage("You must be logged in to take advantage of protected regions.", Color.Red);
+					ply.SendMessage("你只有在登录后才可以使用领地保护相关功能。", Color.Red);
 					ply.HasBeenNaggedAboutLoggingIn = true;
 				}
 				return false;

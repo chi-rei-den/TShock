@@ -264,7 +264,7 @@ namespace TShockAPI.DB
 				var parent = groups.FirstOrDefault(gp => gp.Name == parentname);
 				if (parent == null || name == parentname)
 				{
-					var error = "Invalid parent {0} for group {1}".SFormat(parentname, group.Name);
+					var error = (parent == null ? "无法找到用户组\"{0}\"。" : "无法将\"{0}\"的父组设为它自己。").SFormat(parentname);
 					TShock.Log.ConsoleError(error);
 					throw new GroupManagerException(error);
 				}
@@ -279,7 +279,7 @@ namespace TShockAPI.DB
 				groups.Add(group);
 			}
 			else
-				throw new GroupManagerException("Failed to add group '" + name + ".'");
+				throw new GroupManagerException("无法添加用户组\"" + name + "\"。");
 		}
 
 		/// <summary>
@@ -302,7 +302,7 @@ namespace TShockAPI.DB
 			{
 				parent = GetGroupByName(parentname);
 				if (parent == null || parent == group)
-					throw new GroupManagerException("Invalid parent \"{0}\" for group \"{1}\".".SFormat(parentname, name));
+					throw new GroupManagerException((parent == null ? "无法找到用户组\"{0}\"。" : "无法将\"{0}\"的父组设为它自己。").SFormat(parentname));
 
 				// Check if the new parent would cause loops.
 				List<Group> groupChain = new List<Group> { group, parent };
@@ -311,7 +311,7 @@ namespace TShockAPI.DB
 				{
 					if (groupChain.Contains(checkingGroup))
 						throw new GroupManagerException(
-							string.Format("Invalid parent \"{0}\" for group \"{1}\" would cause loops in the parent chain.", parentname, name));
+							string.Format("用户组\"{0}\"和\"{1}\"互为对方的父组。", parentname, name));
 
 					groupChain.Add(checkingGroup);
 					checkingGroup = checkingGroup.Parent;
@@ -324,7 +324,7 @@ namespace TShockAPI.DB
 			newGroup.Suffix = suffix;
 			string query = "UPDATE GroupList SET Parent=@0, Commands=@1, ChatColor=@2, Suffix=@3, Prefix=@4 WHERE GroupName=@5";
 			if (database.Query(query, parentname, newGroup.Permissions, newGroup.ChatColor, suffix, prefix, name) != 1)
-				throw new GroupManagerException(string.Format("Failed to update group \"{0}\".", name));
+				throw new GroupManagerException(string.Format("无法更新用户组\"{0}\"。", name));
 
 			group.ChatColor = chatcolor;
 			group.Permissions = permissions;

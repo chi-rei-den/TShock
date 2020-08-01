@@ -142,7 +142,7 @@ namespace TShockAPI
 			AllowServer = true;
 			CommandDelegate = cmd;
 			DoLog = true;
-			HelpText = "No help available.";
+			HelpText = "该命令没有帮助信息。";
 			HelpDesc = null;
 			Names = new List<string>(names);
 			Permissions = new List<string>();
