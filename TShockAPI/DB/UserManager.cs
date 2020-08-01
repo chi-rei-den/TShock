@@ -705,7 +705,7 @@ namespace TShockAPI.DB
 		/// <param name="group">The group name.</param>
 		/// <returns>A new GroupNotExistsException with the group that does not exist's name in the message.</returns>
 		public GroupNotExistsException(string group)
-			: base("用户组\"" + name + "\"不存在。")
+			: base("用户组\"" + group + "\"不存在。")
 		{
 		}
 	}
